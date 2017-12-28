@@ -21,7 +21,8 @@
   "homepage": "https://github.com/Sergio-svb/test-flow#readme",
   "dependencies": {
     "body-parser": "^1.18.2",
-    "express": "^4.16.2"
+    "express": "^4.16.2",
+    "mongodb": "^3.0.1"
   },
   "devDependencies": {
     "nodemon": "^1.14.3"
