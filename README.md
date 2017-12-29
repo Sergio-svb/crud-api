@@ -1,16 +1,24 @@
 # test-flow back-end (API) for test-flow-client repository
+Simple CRUD for book model with Mongoose
 
-## Build Setup
+## install dependencies
+npm install<br>
+npm install --global mocha
 
-``` bash
-# install dependencies
-npm install
+## serve at localhost:8000
+npm start
 
-# serve with hot reload at localhost:8000
-node server.js
+## run tests
+npm test
 
-# exaples api requests
-## all seasons
-http://localhost:8000/episodes
-## current (t.e. 4) season
-http://localhost:8000/episodes?season=4
+# provaded API
+## get all books
+GET http://localhost:8000/books
+## create book
+POST http://localhost:8000/books
+## find a book by id
+GET http://localhost:8000/books/:id
+## edit a book by id
+PUT http://localhost:8000/books/:id
+## delete a book by id
+DELETE http://localhost:8000/books/:id

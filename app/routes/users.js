@@ -11,7 +11,6 @@ router.use(function timeLog(req, res, next) {
 // define the home page route
 router.get('/', (req, res) => {
     let result = req.body;
-
     res.send(result);
 });
 

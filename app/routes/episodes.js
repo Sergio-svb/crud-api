@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const collection = require('../source/silicon-valley.json');
+const collection = require('../../source/silicon-valley.json');
 const episodes = collection['_embedded'].episodes;
 // middleware that is specific to this router
 router.use(function timeLog(req, res, next) {
