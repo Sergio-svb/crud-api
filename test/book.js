@@ -126,10 +126,10 @@ describe('Books', () => {
             let book = new Book({title: "The Chronicles of Narnia", author: "C.S. Lewis", year: 1948, pages: 778});
             book.save((err, book) => {
                 chai.request(server)
-                    .put('/books/' + book.id)
+                    .put(`/books/${book.id}`)
                     .send({title: "The Chronicles of Narnia", author: "C.S. Lewis", year: 1950, pages: 778})
                     .set('Content-Type', 'application/x-www-form-urlencoded')
-                    .end((err, res) => {
+                    .then(res => {
                         res.should.have.property('status', 200);
                         res.body.should.be.Object();
                         res.body.should.have.property('message').be.equal('Book updated!');
@@ -146,7 +146,7 @@ describe('Books', () => {
     describe('/DELETE/:id book', () => {
         it('it should DELETE a book by the wrong id', (done) => {
             let fakeId = `fake1111`;
-            chai.request(server).delete(`/books/${fakeId}`).then(res => done(), res => {
+            chai.request(server).delete(`/books/${fakeId}`).catch(res => {
                 res.should.have.property('status', 404);
                 done();
             });
@@ -155,7 +155,7 @@ describe('Books', () => {
         it('it should DELETE a book by the id', (done) => {
             let book = new Book({title: "The Chronicles of Narnia", author: "C.S. Lewis", year: 1948, pages: 778});
             book.save().then(book => {
-                chai.request(server).delete('/books/' + book.id).then(res => {
+                chai.request(server).delete(`/books/${book.id}`).then(res => {
                     res.should.have.property('status', 200);
                     res.body.should.be.Object();
                     res.body.should.have.property('message').be.equal('Book successfully deleted!');
