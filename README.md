@@ -1,4 +1,4 @@
-# test-flow back-end (API) for test-flow-client repository
+# test back-end (API)
 Simple CRUD for book model with Mongoose
 
 ## install dependencies
