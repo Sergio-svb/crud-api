@@ -26,6 +26,10 @@ if(config.util.getEnv('NODE_ENV') !== 'test') {
 let books = require('./app/routes/book');
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use('/books', books);
+
+const creator = require('./app/services/bookInfoCreater');
+creator.writeToFile().then(messsage => {console.log(messsage);});
+
 app.listen(port, () => {
     console.log('We are live on ' + port);
     console.log('Running on mode ', process.env.NODE_ENV);
