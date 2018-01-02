@@ -8,8 +8,8 @@ const port = 8000;
 
 // Configuring the Database Connection
 let options = {
-    server: { socketOptions: { keepAlive: 1, connectTimeoutMS: 30000 } },
-    replset: { socketOptions: { keepAlive: 1, connectTimeoutMS : 30000 } }
+	server: {socketOptions: {keepAlive: 1, connectTimeoutMS: 30000}},
+	replset: {socketOptions: {keepAlive: 1, connectTimeoutMS: 30000}}
 };
 
 //Connect to database
@@ -18,21 +18,29 @@ let db = mongoose.connection;
 db.on('error', console.error.bind(console, 'connection error:'));
 
 //do not show logs in test environment
-if(config.util.getEnv('NODE_ENV') !== 'test') {
-    //morgan to output logs to the console
-    app.use(morgan('combined')); //'combined' outputs apache style logs
+if (config.util.getEnv('NODE_ENV') !== 'test') {
+	//morgan to output logs to the console
+	app.use(morgan('combined')); //'combined' outputs apache style logs
 }
 
 let books = require('./app/routes/book');
-app.use(bodyParser.urlencoded({ extended: true }));
+app.use(bodyParser.urlencoded({extended: true}));
 app.use('/books', books);
 
 const creator = require('./app/services/bookInfoCreater');
-creator.createSammary({_id: 'wygfyg36333ftutueggg', title: "The Chronicles of Narnia", author: "C.S. Lewis", year: 1948, pages: 778}).writeToFile().then(messsage => {console.log(messsage);});
+creator.createSammary({
+	_id: 'wygfyg36333ftutueggg',
+	title: "The Chronicles of Narnia",
+	author: "C.S. Lewis",
+	year: 1948,
+	pages: 778
+}).writeToFile().then(messsage => {
+	console.log(messsage);
+});
 
 app.listen(port, () => {
-    console.log('We are live on ' + port);
-    console.log('Running on mode ', process.env.NODE_ENV);
+	console.log('We are live on ' + port);
+	console.log('Running on mode ', process.env.NODE_ENV);
 });
 
 module.exports = app;
