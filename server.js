@@ -28,7 +28,7 @@ app.use(bodyParser.urlencoded({ extended: true }));
 app.use('/books', books);
 
 const creator = require('./app/services/bookInfoCreater');
-creator.writeToFile().then(messsage => {console.log(messsage);});
+creator.createSammary({_id: 'wygfyg36333ftutueggg', title: "The Chronicles of Narnia", author: "C.S. Lewis", year: 1948, pages: 778}).writeToFile().then(messsage => {console.log(messsage);});
 
 app.listen(port, () => {
     console.log('We are live on ' + port);

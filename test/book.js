@@ -3,10 +3,76 @@ const chaiHttp = require('chai-http');
 let Book = require('../app/models/book');
 const server = require('../server');
 const should = require('should');
-// let sinon = require('sinon');
+let sinon = require('sinon');
+let summary = require('../app/services/bookInfoCreater');
 
 chai.use(chaiHttp);
+describe('Book info creator', () => {
+    let summaryStub;
+    before(function () {
+        summaryStub = {
+            non_object: null,
+            invalid: {title: 'Some title.'},
+            valid: {_id: 'wygfyg36333ftutueggg', title: "The Chronicles of Narnia", author: "C.S. Lewis", year: 1948, pages: 778}
+        };
+    });
 
+    afterEach(function (){
+        summary.createSammary.restore();
+    });
+
+    describe('validate book', () => {
+        /*
+         * Test summary.createSammary by passing null
+         */
+        it('it should pass null to summary creator', (done) => {
+            let spy = sinon.spy(summary, 'createSammary');
+
+            try {
+                summary.createSammary(summaryStub.non_object);
+            } catch (e) {
+                spy.exceptions[0].should.be.instanceof(TypeError);
+                spy.exceptions[0].should.have.property('message', 'Cannot convert undefined or null to object');
+            }
+
+            done();
+        });
+
+        /*
+         * Test summary.createSammary by passing invalid book
+         */
+        it('it should pass invalid book to summary creator', (done) => {
+            let spy = sinon.spy(summary, 'createSammary');
+
+            try {
+                summary.createSammary(summaryStub.invalid);
+            } catch (e) {
+                spy.exceptions[0].should.be.instanceof(TypeError);
+                spy.exceptions[0].should.have.property('message', 'The properties of the book are not valid.');
+            }
+
+            done();
+        });
+
+        /*
+         * Test summary.createSammary by passing valid book
+         */
+        it('it should pass valid book to summary creator', (done) => {
+            let spy = sinon.spy(summary, 'createSammary');
+            let result = summary.createSammary(summaryStub.valid);
+
+            result.should.be.Object();
+            result.should.have.property('book');
+            result.book.should.have.property('title');
+            result.book.should.have.property('author');
+            result.book.should.have.property('pages');
+            result.book.should.have.property('year');
+            spy.callCount.should.be.equal(1);
+
+            done();
+        });
+    });
+});
 /**
  * Main block
  */
