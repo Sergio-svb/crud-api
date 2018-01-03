@@ -5,43 +5,52 @@ const server = require('../server');
 const should = require('should');
 let sinon = require('sinon');
 let summary = require('../app/services/bookInfoCreater');
+let defaults = {
+	book: {
+		_id: 'wygfyg36333ftutueggg',
+		title: "The Chronicles of Narnia",
+		author: "C.S. Lewis",
+		year: 1948,
+		pages: 778
+	}
+};
 
 chai.use(chaiHttp);
-let defaults = {};
+
 describe('Book info creator', () => {
 	before(function () {
-		defaults.book = {
-			_id: 'wygfyg36333ftutueggg',
-			title: "The Chronicles of Narnia",
-			author: "C.S. Lewis",
-			year: 1948,
-			pages: 778
-		};
-	});
-
-	after(function () {
-		delete defaults.book;
-	});
-
-	afterEach(function () {
-		summary.createSammary.restore();
 	});
 
 	describe('validate book', () => {
+		let spy;
+		let summaryStub = sinon.stub();
+		summaryStub.onCall(0).returns(null);
+		summaryStub.onCall(1).returns({title: 'Some title.'});
+		summaryStub.returns(defaults.book);
+
+		beforeEach(function () {
+			spy = sinon.spy(summary, 'createSammary');
+		});
+
+		afterEach(function () {
+			summary.createSammary.restore();
+		});
+
+		after(function () {
+			summaryStub.resetBehavior();
+		});
+
 		/*
 		 * Test summary.createSammary by passing null
 		 */
 		it('it should pass null to summary creator', (done) => {
-			let spy = sinon.spy(summary, 'createSammary');
-			let stub = sinon.stub(defaults, 'book').value(null);
 			try {
-				summary.createSammary(defaults.book);
+				summary.createSammary(summaryStub());
 			} catch (e) {
 				spy.exceptions[0].should.be.instanceof(TypeError);
 				spy.exceptions[0].should.have.property('message', 'Cannot convert undefined or null to object');
 			}
 
-			stub.restore();
 			done();
 		});
 
@@ -49,16 +58,13 @@ describe('Book info creator', () => {
 		 * Test summary.createSammary by passing invalid book
 		 */
 		it('it should pass invalid book to summary creator', (done) => {
-			let spy = sinon.spy(summary, 'createSammary');
-			let stub = sinon.stub(defaults, 'book').value({title: 'Some title.'});
 			try {
-				summary.createSammary(defaults.book);
+				summary.createSammary(summaryStub());
 			} catch (e) {
 				spy.exceptions[0].should.be.instanceof(TypeError);
 				spy.exceptions[0].should.have.property('message', 'The properties of the book are not valid.');
 			}
 
-			stub.restore();
 			done();
 		});
 
@@ -66,9 +72,7 @@ describe('Book info creator', () => {
 		 * Test summary.createSammary by passing valid book
 		 */
 		it('it should pass valid book to summary creator', (done) => {
-			let spy = sinon.spy(summary, 'createSammary');
-			let result = summary.createSammary(defaults.book);
-
+			let result = summary.createSammary(summaryStub());
 			result.should.be.Object();
 			result.should.have.property('book');
 			result.book.should.have.property('title');
@@ -76,11 +80,11 @@ describe('Book info creator', () => {
 			result.book.should.have.property('pages');
 			result.book.should.have.property('year');
 			spy.callCount.should.be.equal(1);
-
 			done();
 		});
 	});
 });
+
 /**
  * Main block
  */
@@ -115,7 +119,7 @@ describe('Books', () => {
 	 */
 	describe('/POST book', () => {
 		/**
-		 * Create a book without pages field
+		 * Create a book without pages fields
 		 */
 		it('it should not POST a book without pages field', (done) => {
 			let book = {
@@ -175,7 +179,7 @@ describe('Books', () => {
 			book.save((err, book) => {
 				chai.request(server)
 					.get('/books/' + book.id)
-					.send(book)
+					// .send(book)
 					.end((err, res) => {
 						res.should.have.property('status', 200);
 						res.body.should.be.Object();
